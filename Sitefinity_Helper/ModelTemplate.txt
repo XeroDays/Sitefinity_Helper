@@ -1,0 +1,10 @@
+﻿using Progress.Sitefinity.Renderer.Models;
+using System.Collections.Generic;
+
+namespace SitefinityWebApp.Mvc.Models
+{
+    public class {controllerName}Model
+    {
+         
+    } 
+}

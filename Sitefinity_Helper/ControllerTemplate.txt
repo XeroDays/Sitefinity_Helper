@@ -1,0 +1,18 @@
+﻿ 
+using SitefinityWebApp.Mvc.Models; 
+using System.Web.Mvc; 
+using Telerik.Sitefinity.Mvc;
+using Telerik.Sitefinity.Personalization;
+
+namespace SitefinityWebApp.Mvc.Controllers
+{
+    [ControllerToolboxItem(Name = "{controllerName}_MVC", Title = "{controllerName} widget", SectionName = "Revamp New Widgets")]
+    public class {controllerName}Controller : Controller, IPersonalizable
+    {  
+        public ActionResult Index()
+        {
+            var model = new {controllerName}Model(); 
+            return View(model);
+        }
+    }
+}
