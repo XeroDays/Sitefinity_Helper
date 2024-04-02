@@ -50,9 +50,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ControllerTemplate.txt" />
-    <Content Include="ModelTemplate.txt" />
-    <Content Include="ViewTemplate.txt" />
+    <Content Include="ControllerTemplate.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ModelTemplate.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ViewTemplate.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
