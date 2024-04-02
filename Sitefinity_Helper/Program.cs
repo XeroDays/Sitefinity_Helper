@@ -9,7 +9,7 @@ namespace Sitefinity_Helper
 {
     class Program
     {
-        static string folderPath = @"C:\Users\wfth8817\Desktop\Clone\web\Mvc\";
+        static string folderPath = @"C:\Users\wfth8817\Desktop\Clone\web\Mvc\";// trest
 
         static void Main(string[] args)
         { 
