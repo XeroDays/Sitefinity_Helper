@@ -39,7 +39,7 @@ namespace Sitefinity_Helper
                 File.Create(controllerpath).Close();
                 File.WriteAllText(controllerpath, controllerData);
 
-                File.Create(modelpath).Close();
+                File.Create(modelpath).Close();//test
                 File.WriteAllText(modelpath, modelData);
 
                 Directory.CreateDirectory(Path.Combine(folderPath, @"Views\" + userInput));
