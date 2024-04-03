@@ -87,6 +87,13 @@ namespace Sitefinity_Helper
                 folderPath = Console.ReadLine();
                 File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt")).Close();
                 File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"), folderPath);
+                Console.WriteLine("Path Added : " + folderPath);
+                if(validateFiles())
+                {
+                    Console.WriteLine("-> Models folder found!");
+                    Console.WriteLine("-> Views folder found!");
+                    Console.WriteLine("-> Controllers folder found!");
+                }
             }
         }
 
