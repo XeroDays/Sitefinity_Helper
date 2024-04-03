@@ -95,7 +95,9 @@ namespace Sitefinity_Helper
             if (!Directory.Exists(folderPath))
             {
                 Console.WriteLine("Error: Solution MVC folder not exist on selected path.");
-                Console.WriteLine(folderPath); 
+                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
+                Console.WriteLine(folderPath);
+                Console.WriteLine("Restart to reset MVC Folder Path.");
                 return false;
             }
 
@@ -104,7 +106,8 @@ namespace Sitefinity_Helper
             {
                 Console.WriteLine("Error: Controllers, Views, Models Folder not found!");
                 File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
-                Console.WriteLine(folderPath); 
+                Console.WriteLine(folderPath);
+                Console.WriteLine("Restart to reset MVC Folder Path.");
                 return false;
             }
 
