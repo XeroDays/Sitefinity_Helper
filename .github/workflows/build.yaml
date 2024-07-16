@@ -19,7 +19,7 @@ jobs:
         dotnet-version: '8.0'
 
     - name: Restore dependencies
-      run: dotnet restore Siteoverloader.sln
+      run: dotnet restore SitefinityHelper.sln
 
     - name: Build
       run: dotnet build --configuration Release
@@ -30,7 +30,7 @@ jobs:
       
     - name: Create Zip Archive
       run: |
-        Compress-Archive -Path ./SiteCrawlerAdvance/bin/Release/net8.0-windows -DestinationPath SitefinityHelper.zip
+        Compress-Archive -Path ./Sitefinity_Helper/bin/Release -DestinationPath SitefinityHelper.zip
       if: success()
 
     - name: Publish Release Artifact
