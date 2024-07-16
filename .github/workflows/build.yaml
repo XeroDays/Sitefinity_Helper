@@ -30,14 +30,14 @@ jobs:
       
     - name: Create Zip Archive
       run: |
-        Compress-Archive -Path ./SiteCrawlerAdvance/bin/Release/net8.0-windows -DestinationPath SiteCrawler_Software.zip
+        Compress-Archive -Path ./SiteCrawlerAdvance/bin/Release/net8.0-windows -DestinationPath SitefinityHelper.zip
       if: success()
 
     - name: Publish Release Artifact
       uses: actions/upload-artifact@v2
       with:
         name: WinForms-Release
-        path: SiteCrawler_Software.zip
+        path: SitefinityHelper.zip
 
   publish:
     name: Publish Release to GitHub
@@ -72,6 +72,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SiteCrawler_Software.zip
-        asset_name: SiteCrawler_Software.zip
+        asset_path: ./SitefinityHelper.zip
+        asset_name: SitefinityHelper.zip
         asset_content_type: application/zip
