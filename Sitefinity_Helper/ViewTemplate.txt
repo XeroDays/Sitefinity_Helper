@@ -9,5 +9,5 @@
 
 @{
     bool isDesignModel = Telerik.Sitefinity.Services.SystemManager.IsDesignMode && !Telerik.Sitefinity.Services.SystemManager.IsPreviewMode;
-    string animation = isDesignModel ? "" : "animate__fadeInUp wow"; //   @animation
+   
 }
