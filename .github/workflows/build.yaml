@@ -1,7 +1,6 @@
 name: Create Release Pipeline
 
-on: 
- push: 
+on:  
  release:
     types: [published]
 
