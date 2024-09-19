@@ -1,7 +1,8 @@
 name: Create Release Pipeline
 
-on:
-  release:
+on: 
+ push: 
+ release:
     types: [published]
 
 env:
@@ -12,7 +13,7 @@ env:
 
 jobs:
   build-and-release:
-    name: Build and Upload ${{ env.PROJECT_NAME }} .NET 4.8 App
+    name: Build and Upload ${{ vars.PROJECT_NAME }} .NET 4.8 App
     runs-on: windows-latest
 
     steps:
