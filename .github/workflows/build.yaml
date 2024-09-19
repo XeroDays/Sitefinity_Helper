@@ -26,12 +26,11 @@ jobs:
         run: nuget restore
 
         
-      - name: Delete old release assets
-        uses: mknejp/delete-release-assets@v1
+      - name: Delete other release assets
+        uses: andreaswilli/delete-release-assets-action@<version>
         with:
-          token: ${{ secrets.RELEASE_TOKEN }} 
-          assets: '*.zip'
-          tag: refs # This may also be of the form 'refs/tags/staging'
+          github_token: ${{ secrets.RELEASE_TOKEN }} 
+
 
       - name: Build the project
         run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release
