@@ -1,14 +1,14 @@
 name: Create Release Pipeline
 
-on:
-  release:
+on:  
+ release:
     types: [published]
 
 env:
   PROJECT_NAME: SitefinityHelper              # Change this to your project name
   SOLUTION_FILE: ./SitefinityHelper.sln       # Change this to your solution file path
   BUILD_PATH: ./Sitefinity_Helper/bin/Release # Path where the build artifacts are stored
-  ZIP_NAME: SitefinityHelper.zip              # Name of the zipped build folder
+  ZIP_NAME: SitefinityHelper.zip                 # Name of the zipped build folder
 
 jobs:
   build-and-release:
@@ -22,17 +22,8 @@ jobs:
       - name: Setup .NET Framework
         uses: microsoft/setup-msbuild@v1
 
-
       - name: Restore NuGet packages
         run: nuget restore
-
-      - uses: tinoji/delete-older-release-assets@v1.0.1
-        with:
-          repo: <owner>/<repoName> # defaults to current repo
-          keep_latest: 1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
 
       - name: Build the project
         run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release
@@ -51,7 +42,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
- 
 
       - name: Upload zip to GitHub release
         uses: softprops/action-gh-release@v1
@@ -59,4 +49,3 @@ jobs:
           files: ${{ env.BUILD_PATH }}/${{ env.ZIP_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
- 
