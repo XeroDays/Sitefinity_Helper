@@ -43,25 +43,17 @@ jobs:
         with:
           name: build
 
+      - name: Delete old release assets
+        uses: mknejp/delete-release-assets@v1
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          tag: staging # This may also be of the form 'refs/tags/staging' 
+          assets: '*.zip'
+
       - name: Upload zip to GitHub release
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ env.BUILD_PATH }}/${{ env.ZIP_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
-      - name: Delete source code assets from release
-        run: |
-          $token = "${{ secrets.RELEASE_TOKEN }}"
-          $releaseId = (Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }}" -Headers @{Authorization = "token $token"}).id
-          
-          $assets = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/$releaseId/assets" -Headers @{Authorization = "token $token"}
-          
-          foreach ($asset in $assets) {
-            if ($asset.name -like "*source code*") {
-              Write-Output "Deleting asset $($asset.id): $($asset.name)"
-              Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/assets/$($asset.id)" -Method Delete -Headers @{Authorization = "token $token"}
-            }
-          }
-        env:
-          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+ 
