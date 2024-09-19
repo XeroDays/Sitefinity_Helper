@@ -31,6 +31,7 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_TOKEN }} 
           assets: '*.zip'
+          tag: tags # This may also be of the form 'refs/tags/staging'
 
       - name: Build the project
         run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release
