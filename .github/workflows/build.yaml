@@ -9,7 +9,7 @@ env:
   SOLUTION_FILE: ./SitefinityHelper.sln       # Change this to your solution file path
   BUILD_PATH: ./Sitefinity_Helper/bin/Release # Path where the build artifacts are stored
   ZIP_NAME: SitefinityHelper.zip              # Name of the zipped build folder
-  GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
 jobs:
   build-and-release:
     name: Pipeline to Release
@@ -52,15 +52,16 @@ jobs:
 
       - name: Delete source code assets from release
         run: |
-          $releaseId = (Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }}" -Headers @{Authorization = "token $($env.GITHUB_TOKEN)"}).id
+          $token = "${{ secrets.RELEASE_TOKEN }}"
+          $releaseId = (Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }}" -Headers @{Authorization = "token $token"}).id
           
-          $assets = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/$releaseId/assets" -Headers @{Authorization = "token $($env.GITHUB_TOKEN)"}
+          $assets = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/$releaseId/assets" -Headers @{Authorization = "token $token"}
           
           foreach ($asset in $assets) {
             if ($asset.name -like "*source code*") {
               Write-Output "Deleting asset $($asset.id): $($asset.name)"
-              Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/assets/$($asset.id)" -Method Delete -Headers @{Authorization = "token $($env.GITHUB_TOKEN)"}
+              Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/assets/$($asset.id)" -Method Delete -Headers @{Authorization = "token $token"}
             }
           }
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
