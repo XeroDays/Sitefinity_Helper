@@ -22,15 +22,18 @@ jobs:
       - name: Setup .NET Framework
         uses: microsoft/setup-msbuild@v1
 
+
       - name: Restore NuGet packages
         run: nuget restore
 
-        
-      - name: Delete other release assets
-        uses: andreaswilli/delete-release-assets-action@v4.0.0
+      - name: Remove asset
+        uses: flcdrg/remove-release-asset-action@v1
+        id: remove
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.RELEASE_TOKEN }} 
-
+            release_id: ${{ steps.create-test-release.outputs.id }}
+            asset_name: '*.zip'
 
       - name: Build the project
         run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release
