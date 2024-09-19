@@ -27,7 +27,7 @@ jobs:
 
         
       - name: Delete other release assets
-        uses: andreaswilli/delete-release-assets-action@<version>
+        uses: andreaswilli/delete-release-assets-action@v4.0.0
         with:
           github_token: ${{ secrets.RELEASE_TOKEN }} 
 
