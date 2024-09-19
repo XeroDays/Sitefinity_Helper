@@ -11,6 +11,7 @@ jobs:
   build:
     name: Build WinForms .NET 4.8 App
     runs-on: windows-latest
+    if: github.event_name == 'push'  # Only build on push (tags)
 
     steps:
       - name: Checkout code
@@ -36,7 +37,7 @@ jobs:
     name: Create and Upload Build to Release
     needs: build
     runs-on: windows-latest
-    if: github.event_name == 'release'
+    if: github.event_name == 'release'  # Only handle releases
 
     steps:
       - name: Checkout code
@@ -53,4 +54,4 @@ jobs:
           files: |
             ./Sitefinity_Helper/bin/Release/*.exe
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
