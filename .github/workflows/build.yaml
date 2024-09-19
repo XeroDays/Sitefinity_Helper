@@ -1,77 +1,56 @@
-name: Release Workflow
+name: Build and Release WinForms .NET 4.8 App
 
 on:
+  push:
+    tags:
+      - '*'
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build:
-    name: Build Release
+    name: Build WinForms .NET 4.8 App
     runs-on: windows-latest
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '8.0'
+      - name: Setup .NET Framework
+        uses: microsoft/setup-msbuild@v1
 
-    - name: Restore dependencies
-      run: dotnet restore SitefinityHelper.sln
+      - name: Restore NuGet packages
+        run: nuget restore
 
-    - name: Build
-      run: dotnet build --configuration Release
-    
-    
-    - name: List Solution Directory
-      run: Get-ChildItem -Path . -Recurse
-      
-    - name: Create Zip Archive
-      run: |
-        Compress-Archive -Path ./Sitefinity_Helper/bin/Release -DestinationPath SitefinityHelper.zip
-      if: success()
+      - name: Build the project
+        run: msbuild ./SitefinityHelper.sln /p:Configuration=Release
 
-    - name: Publish Release Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: WinForms-Release
-        path: SitefinityHelper.zip
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: |
+            ./Sitefinity_Helper/bin/Release
 
-  publish:
-    name: Publish Release to GitHub
+  release:
+    name: Create and Upload Build to Release
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    if: github.event_name == 'release'
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Download Release Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: WinForms-Release
-        path: ./
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SitefinityHelper.zip
-        asset_name: SitefinityHelper.zip
-        asset_content_type: application/zip
+      - name: Upload exe to GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./Sitefinity_Helper/bin/Release/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
