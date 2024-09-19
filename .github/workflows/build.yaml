@@ -1,18 +1,18 @@
 name: Create Release Pipeline
 
-on:  
- release:
+on:
+  release:
     types: [published]
 
 env:
   PROJECT_NAME: SitefinityHelper              # Change this to your project name
   SOLUTION_FILE: ./SitefinityHelper.sln       # Change this to your solution file path
   BUILD_PATH: ./Sitefinity_Helper/bin/Release # Path where the build artifacts are stored
-  ZIP_NAME: SitefinityHelper.zip                 # Name of the zipped build folder
+  ZIP_NAME: SitefinityHelper.zip              # Name of the zipped build folder
 
 jobs:
-  build-and-release:
-    name: Pipeline to Release
+  build:
+    name: Build ${{ env.PROJECT_NAME }} Project
     runs-on: windows-latest
 
     steps:
@@ -37,6 +37,15 @@ jobs:
         with:
           name: build
           path: ${{ env.BUILD_PATH }}/${{ env.ZIP_NAME }}
+
+  release:
+    name: Upload Build to GitHub Release
+    runs-on: windows-latest
+    needs: build  # This ensures the release job runs only if the build succeeds
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
