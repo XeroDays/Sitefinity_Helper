@@ -9,7 +9,7 @@ env:
   SOLUTION_FILE: ./SitefinityHelper.sln       # Change this to your solution file path
   BUILD_PATH: ./Sitefinity_Helper/bin/Release # Path where the build artifacts are stored
   ZIP_NAME: SitefinityHelper.zip              # Name of the zipped build folder
-
+  GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 jobs:
   build-and-release:
     name: Pipeline to Release
