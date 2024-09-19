@@ -26,8 +26,12 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore
 
-      - name: Remove asset
-        uses: liudonghua123/delete-release-action@v1 
+      - uses: tinoji/delete-older-release-assets@v1.0.1
+        with:
+          repo: <owner>/<repoName> # defaults to current repo
+          keep_latest: 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
 
       - name: Build the project
