@@ -1,6 +1,6 @@
 name: Create Release Pipeline
 
-on:
+on:  
   release:
     types: [published]
 
@@ -11,8 +11,8 @@ env:
   ZIP_NAME: SitefinityHelper.zip              # Name of the zipped build folder
 
 jobs:
-  build:
-    name: Build ${{ vars.SOLUTION_FILE }} Project
+  build-and-release:
+    name: Pipeline to Release
     runs-on: windows-latest
 
     steps:
@@ -38,15 +38,6 @@ jobs:
           name: build
           path: ${{ env.BUILD_PATH }}/${{ env.ZIP_NAME }}
 
-  release:
-    name: Upload Build to GitHub Release
-    runs-on: windows-latest
-    needs: build  # This ensures the release job runs only if the build succeeds
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
@@ -56,5 +47,25 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ env.BUILD_PATH }}/${{ env.ZIP_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Delete source code assets from release
+        run: |
+          echo "Fetching release ID..."
+          RELEASE_ID=$(curl -H "Authorization: token ${{ secrets.RELEASE_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }} \
+            | jq '.id')
+          
+          echo "Fetching asset list..."
+          ASSET_IDS=$(curl -H "Authorization: token ${{ secrets.RELEASE_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets \
+            | jq -r '.[] | select(.name | contains("source code")) | .id')
+          
+          for ASSET_ID in $ASSET_IDS; do
+            echo "Deleting asset ID: $ASSET_ID"
+            curl -X DELETE -H "Authorization: token ${{ secrets.RELEASE_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/releases/assets/$ASSET_ID
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
