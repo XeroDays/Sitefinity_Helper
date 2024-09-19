@@ -16,7 +16,13 @@ namespace Sitefinity_Helper
         static void Main(string[] args)
         {
 
-            configureMvcFolder();
+          bool status =  configureMvcFolder();
+
+            
+            if (!status) { 
+                Console.ReadKey();
+                return;
+            }
 
             //check if the folder path has three folders , controlllers, views, models
 
@@ -34,7 +40,7 @@ namespace Sitefinity_Helper
             string Viewtemplatedata = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ViewTemplate.txt"));
 
 
-
+            Console.WriteLine("Enter Widget name you want to create:");
             string userInput = Console.ReadLine();
             string controllerpath = Path.Combine(folderPath, @"Controllers\" + userInput + "Controller.cs");
             string modelpath = Path.Combine(folderPath, @"Models\" + userInput + "Model.cs");
@@ -71,28 +77,37 @@ namespace Sitefinity_Helper
         }
 
 
-        static void configureMvcFolder()
+        static bool configureMvcFolder()
         {
             //check if the path.txt file exist in the curent directory
             if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt")))
             {
                 folderPath = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
+                return true;
             }
             else
             {
-                Console.WriteLine("Error: path.txt file not exist in the current directory.");
-                Console.WriteLine("Please enter the path of the solution MVC folder:");
+               
+                Console.WriteLine("Please enter the full relative path of the solution MVC folder:");
                 //open directory dialog
 
                 folderPath = Console.ReadLine();
                 File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt")).Close();
                 File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"), folderPath);
-                Console.WriteLine("Path Added : " + folderPath);
-                if(validateFiles())
+
+                if (validateFiles())
                 {
+                    Console.WriteLine("Path Added : " + folderPath);
                     Console.WriteLine("-> Models folder found!");
                     Console.WriteLine("-> Views folder found!");
                     Console.WriteLine("-> Controllers folder found!");
+                    Console.WriteLine("");
+                    Console.WriteLine("");
+                    Console.WriteLine("Success  - Restart to use it.");
+                    return false;
+                }else
+                {
+                    return false;
                 }
             }
         }
@@ -101,9 +116,10 @@ namespace Sitefinity_Helper
         {
             if (!Directory.Exists(folderPath))
             {
+                Console.WriteLine("");
+                Console.WriteLine("");
                 Console.WriteLine("Error: Solution MVC folder not exist on selected path.");
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
-                Console.WriteLine(folderPath);
+                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt")); 
                 Console.WriteLine("Restart to reset MVC Folder Path.");
                 return false;
             }
@@ -111,9 +127,10 @@ namespace Sitefinity_Helper
 
             if (!Directory.Exists(Path.Combine(folderPath, "Controllers")) || !Directory.Exists(Path.Combine(folderPath, "Views")) || !Directory.Exists(Path.Combine(folderPath, "Models")))
             {
-                Console.WriteLine("Error: Controllers, Views, Models Folder not found!");
-                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
-                Console.WriteLine(folderPath);
+                Console.WriteLine("");
+                Console.WriteLine("");
+                Console.WriteLine("Error: Controllers, Views, Models Folder not found!"); 
+                File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "path.txt")); 
                 Console.WriteLine("Restart to reset MVC Folder Path.");
                 return false;
             }
