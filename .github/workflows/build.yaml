@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    name: Build ${{ env.PROJECT_NAME }} Project
+    name: Build ${{ vars.SOLUTION_FILE }} Project
     runs-on: windows-latest
 
     steps:
