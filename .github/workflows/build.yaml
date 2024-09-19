@@ -1,6 +1,6 @@
 name: Create Release Pipeline
 
-on:  
+on:
   release:
     types: [published]
 
@@ -52,20 +52,15 @@ jobs:
 
       - name: Delete source code assets from release
         run: |
-          echo "Fetching release ID..."
-          RELEASE_ID=$(curl -H "Authorization: token ${{ secrets.RELEASE_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }} \
-            | jq '.id')
+          $releaseId = (Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }}" -Headers @{Authorization = "token $($env.GITHUB_TOKEN)"}).id
           
-          echo "Fetching asset list..."
-          ASSET_IDS=$(curl -H "Authorization: token ${{ secrets.RELEASE_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets \
-            | jq -r '.[] | select(.name | contains("source code")) | .id')
+          $assets = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/$releaseId/assets" -Headers @{Authorization = "token $($env.GITHUB_TOKEN)"}
           
-          for ASSET_ID in $ASSET_IDS; do
-            echo "Deleting asset ID: $ASSET_ID"
-            curl -X DELETE -H "Authorization: token ${{ secrets.RELEASE_TOKEN }}" \
-              https://api.github.com/repos/${{ github.repository }}/releases/assets/$ASSET_ID
-          done
+          foreach ($asset in $assets) {
+            if ($asset.name -like "*source code*") {
+              Write-Output "Deleting asset $($asset.id): $($asset.name)"
+              Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/assets/$($asset.id)" -Method Delete -Headers @{Authorization = "token $($env.GITHUB_TOKEN)"}
+            }
+          }
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
