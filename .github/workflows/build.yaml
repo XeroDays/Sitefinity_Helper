@@ -25,6 +25,13 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore
 
+        
+      - name: Delete old release assets
+        uses: mknejp/delete-release-assets@v1
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }} 
+          assets: '*.zip'
+
       - name: Build the project
         run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release
 
@@ -42,13 +49,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-
-      - name: Delete old release assets
-        uses: mknejp/delete-release-assets@v1
-        with:
-          token: ${{ secrets.RELEASE_TOKEN }}
-          tag: staging # This may also be of the form 'refs/tags/staging' 
-          assets: '*.zip'
+ 
 
       - name: Upload zip to GitHub release
         uses: softprops/action-gh-release@v1
